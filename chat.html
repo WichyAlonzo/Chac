@@ -1,0 +1,151 @@
+<html><head>
+<!-- Scripts jQuery, bootstrap -->
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+       
+       <!-- Estilos  bootstrap, chat-->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<link rel="stylesheet" href="css.css">
+
+      <!-- área de código Firebase y lectura de Mensajes-->
+       <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    
+
+    apiKey: "AIzaSyB9s0IY1sQyd3jS96PdPc3KBCSl7VFaTK4",
+    authDomain: "jr-arguelles.firebaseapp.com",
+    databaseURL: "https://jr-arguelles-default-rtdb.firebaseio.com",
+    storageBucket: "jr-arguelles.appspot.com",
+    messagingSenderId: "46118742765",
+    
+  };
+  firebase.initializeApp(config);
+ 
+    //Variable con acceso a datos 
+    var TablaDeBaseDatos= firebase.database().ref('chat');
+    
+    TablaDeBaseDatos.limitToLast(20).on('value',function(snapshot){
+        
+         $(".chat").html(""); // Limpiamos todo el contenido del chat
+        
+        // Leer todos los mensajes en firebase
+        snapshot.forEach(function(e){
+            var objeto=e.val(); // Asignar todos los valores a un objeto
+            
+            // Validar datos nulos y agregar contenido en forma de lista etiqueta <li>
+             if((objeto.Mensaje!=null)&&(objeto.Nombre!=null)){
+                 
+                 // Copia el contenido al template y luego lo inserta en el chat
+                 $( "#plantilla" ).clone().prependTo( ".chat" );
+                 $('.chat #plantilla').show(10);
+                 $('.chat #plantilla .Nombre').html(objeto.Nombre);
+                 $('.chat #plantilla .Mensaje').html(objeto.Mensaje);
+                 $('.chat #plantilla .Tiempo').html(objeto.Fecha);
+                 $('.chat #plantilla').attr("id","");
+             }
+            
+        });
+    });
+    
+    
+    
+</script>
+       
+   </head>
+   <body class="m-0 vh-100 row justify-content-center aling-item-center">       
+       <div class="container text-center">
+          <div class="row">
+          <div class="col-md-12">
+              <br>
+                       <a href="http://develoteca.com/" rel="home">
+                           <!-- <img src="http://develoteca.com/wp-content/themes/site/img/develoteca.png"> -->
+                    </a>
+                     <br>
+                    <br>
+             
+    <br>
+       
+   </div>
+          </div>
+    <div class="row">
+        <!-- inicio de la caja de chat con bootstrap -->
+        <div class="col-md-6 col-md-offset-3" style="width: 100%!important;">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-comment"></span> Chat
+                    
+                </div>
+                <div class="panel-body">
+                    <ul class="chat"> </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="Mensaje" type="text" class="form-control input-sm" placeholder="Escribe un mensaje..."  maxlength="50">
+                        <span class="input-group-btn">
+                            <button class="btn btn-warning btn-sm" id="btnEnviar">
+                                Enviar</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
+</div>
+       <li style="display:none" id="plantilla" class="left clearfix">
+           <span class="chat-img pull-left">
+           </span>
+            <div class="chat-body clearfix">
+                    <div class="header">
+                      <strong class="primary-font Nombre"></strong> 
+                        <small class="pull-right text-muted">
+                        <span class="glyphicon glyphicon-asterisk Tiempo">
+                        </span> </small>
+                    </div>
+                    <div class="container-xxl" style="padding-left: 0px;">
+                        <p class="Mensaje"></p>
+                    </div>
+                </div>
+        </li>
+       
+       
+    <!-- Scripts de acción al botón -->
+      <script>
+       var Nombre= prompt("Nombre:");
+          
+       $('#btnEnviar').click(function(){
+           var formatofecha= new Date(); 
+           var d= formatofecha.getUTCDate();
+           var m= formatofecha.getMonth()+1;
+           var y= formatofecha.getFullYear();
+           var h=formatofecha.getHours();
+           var min= formatofecha.getMinutes();
+           
+           Fecha= d+"/"+m+"/"+y+" "+h+":"+min;
+           
+           TablaDeBaseDatos.push({
+               Nombre:Nombre,
+               Mensaje:$("#Mensaje").val(),
+               Fecha:Fecha
+            });
+           $('#Mensaje').val('');
+           
+           
+       });
+
+            let inputs = document.getElementById("Mensaje")
+      
+            window.addEventListener("load", () => {
+                inputs.focus()
+            })
+       </script>
+      <script>
+  
+</script>
+      
+   
+
+</body></html>
